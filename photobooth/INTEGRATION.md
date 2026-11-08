@@ -1,10 +1,10 @@
 # Integration / nghiệm thu
 
 ## Đã có trong repository
-- \`js/Photobooth.js\`: bộ mã chụp 4 khung, 3 bố cục, đếm ngược, bộ lọc ảnh, màu/khung, chữ, PNG/GIF/video, dùng Canvas.
-- \`js/CaptionFilters.js\`: 40 preset chú thích miễn phí, tìm kiếm, tùy phối, vẽ gradient, dữ liệu động do người dùng cung cấp.
-- \`photobooth/preview.html\`: môi trường kiểm thử Photobooth cục bộ.
-- \`photobooth/test-captions.cjs\`: kiểm thử mã chú thích.
+- `js/Photobooth.js`: bộ mã chụp 4 khung, 3 bố cục, đếm ngược, bộ lọc ảnh, màu/khung, chữ, PNG/GIF/video, dùng Canvas.
+- `js/CaptionFilters.js`: 40 preset chú thích miễn phí, tìm kiếm, tùy phối, vẽ gradient, dữ liệu động do người dùng cung cấp.
+- `photobooth/preview.html`: môi trường kiểm thử Photobooth cục bộ.
+- `photobooth/test-captions.cjs`: kiểm thử mã chú thích.
 
 ## Chưa có – không giả lập kết quả
 - Bộ xử lý ảnh hoặc tùy biến UI **bên trong Locket iOS gốc** thông qua Shadowrocket.
@@ -13,9 +13,9 @@
 - Kiểm thử camera iPhone, codec video và phản hồi API Locket trên thiết bị thật.
 
 ## Vì sao
-\`modules/Locket_ohb.sgmodule\` chỉ hook \`api.revenuecat.com\` để sửa entitlement JSON. Shadowrocket xử lý request/response HTTPS tại tầng mạng. Nó không tạo được camera view, điều khiển chụp 4 frame hoặc dựng UIKit/SwiftUI nếu binary Locket không có extension point/feature flag nhận dạng sẵn.
+`modules/Locket_ohb.sgmodule` chỉ hook `api.revenuecat.com` để sửa entitlement JSON. Shadowrocket xử lý request/response HTTPS tại tầng mạng. Nó không tạo được camera view, điều khiển chụp 4 frame hoặc dựng UIKit/SwiftUI nếu binary Locket không có extension point/feature flag nhận dạng sẵn.
 
-Mã \`Photobooth.js\` và \`CaptionFilters.js\` là **image filters and data**, không phải **Shadowrocket HTTP filters**. Đổi tên file thành \`.sgmodule\` không biến nó thành extension native.
+Mã `Photobooth.js` và `CaptionFilters.js` là **image filters and data**, không phải **Shadowrocket HTTP filters**. Đổi tên file thành `.sgmodule` không biến nó thành extension native.
 
 ## Điều kiện kỹ thuật để tiếp tục
 1. Xác minh một endpoint camera/caption hoặc remote configuration của **Locket native trên phiên bản iOS đang sử dụng**.

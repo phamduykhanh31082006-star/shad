@@ -24,13 +24,13 @@ Repository được đối chiếu: https://github.com/vuong2023/shad (nhánh `m
 
 ## Cách chạy bản kiểm thử
 
-Đây không phải sản phẩm website đã triển khai; `preview.html` chỉ là bộ kiểm thử mã JavaScript. Trong thư mục này chạy:
+Đây không phải sản phẩm website đã triển khai; `preview.html` chỉ là bộ kiểm thử mã JavaScript. Trong thư mục gốc repository chạy:
 
 ```bash
 python3 -m http.server 8000
 ```
 
-Sau đó truy cập `http://localhost:8000/preview.html` bằng trình duyệt trên máy đang chạy server và nhấn **Xem ảnh minh họa**, hoặc bật camera nếu HTTPS/localhost được hỗ trợ.
+Sau đó truy cập `http://localhost:8000/photobooth/preview.html` bằng trình duyệt trên máy đang chạy server và nhấn **Xem ảnh minh họa**, hoặc bật camera nếu HTTPS/localhost được hỗ trợ.
 
 Có thể nhúng `js/Photobooth.js` vào một trang HTML hoặc ứng dụng có WebView do bạn sở hữu, rồi tạo `new PhotoboothFree.Photobooth({ target: '#app' })`.
 

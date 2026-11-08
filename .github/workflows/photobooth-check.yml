@@ -1,0 +1,24 @@
+name: Photobooth source checks
+on:
+  push:
+    paths:
+      - "js/CaptionFilters.js"
+      - "photobooth/**"
+      - ".github/workflows/photobooth-check.yml"
+  pull_request:
+    paths:
+      - "js/CaptionFilters.js"
+      - "photobooth/**"
+jobs:
+  caption-tests:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+      - name: Check JavaScript syntax
+        run: |
+          node --check js/CaptionFilters.js
+          node --check js/Photobooth.js
+      - name: Test free caption presets
+        run: node photobooth/test-captions.cjs
