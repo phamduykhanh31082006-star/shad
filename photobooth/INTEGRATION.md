@@ -1,11 +1,27 @@
-# Photobooth Free – integration status
+# Integration / nghiệm thu
 
-- Native iOS Locket camera injection via Shadowrocket: **not implemented**.
-- The file `js/Photobooth.js` contains the independently authored Photobooth camera and image compositor.
-- The Shadowrocket HTTP request/response JavaScript environment does not provide browser DOM, Canvas or `getUserMedia` APIs, so pointing a `.sgmodule` script-path to this file cannot display the Photobooth UI inside Locket.
-- Do **not** add a fake MITM rule to the existing `modules/Locket_ohb.sgmodule`: that would risk breaking the existing setup without enabling Photobooth.
-- `photobooth/preview.html` is a local test harness only, not a deployed website. From repository root run `python3 -m http.server 8000` and visit `http://localhost:8000/photobooth/preview.html` in a desktop browser.
-- Features implemented in the source are free: 4-photo capture, timer, layout, filters, frames, decorations, date/text and output options.
-- GitHub stores source files; it does not cause them to execute inside another app. Network-driven integration would first require a documented endpoint or extension point of the target app.
+## Đã có trong repository
+- \`js/Photobooth.js\`: bộ mã chụp 4 khung, 3 bố cục, đếm ngược, bộ lọc ảnh, màu/khung, chữ, PNG/GIF/video, dùng Canvas.
+- \`js/CaptionFilters.js\`: 40 preset chú thích miễn phí, tìm kiếm, tùy phối, vẽ gradient, dữ liệu động do người dùng cung cấp.
+- \`photobooth/preview.html\`: môi trường kiểm thử Photobooth cục bộ.
+- \`photobooth/test-captions.cjs\`: kiểm thử mã chú thích.
 
-Origin: new Photobooth code written for this fork; upstream scripts retained unchanged.
+## Chưa có – không giả lập kết quả
+- Bộ xử lý ảnh hoặc tùy biến UI **bên trong Locket iOS gốc** thông qua Shadowrocket.
+- Nút Photobooth, Aa+ hoặc panel captions trong Locket native.
+- Khả năng tự động gửi ảnh Photobooth vào Locket native.
+- Kiểm thử camera iPhone, codec video và phản hồi API Locket trên thiết bị thật.
+
+## Vì sao
+\`modules/Locket_ohb.sgmodule\` chỉ hook \`api.revenuecat.com\` để sửa entitlement JSON. Shadowrocket xử lý request/response HTTPS tại tầng mạng. Nó không tạo được camera view, điều khiển chụp 4 frame hoặc dựng UIKit/SwiftUI nếu binary Locket không có extension point/feature flag nhận dạng sẵn.
+
+Mã \`Photobooth.js\` và \`CaptionFilters.js\` là **image filters and data**, không phải **Shadowrocket HTTP filters**. Đổi tên file thành \`.sgmodule\` không biến nó thành extension native.
+
+## Điều kiện kỹ thuật để tiếp tục
+1. Xác minh một endpoint camera/caption hoặc remote configuration của **Locket native trên phiên bản iOS đang sử dụng**.
+2. Chứng minh bằng phản hồi không chứa bí mật rằng client có hỗ trợ schema danh sách nhãn/giao diện tự động. Không đụng đến mật khẩu, ảnh cá nhân hoặc token.
+3. Viết bài kiểm thử mẫu local, rồi tạo module MITM chỉ khớp hostname/path chính xác với fail-open và giới hạn kích thước.
+4. Kiểm thử native trên iPhone: nút mới xuất hiện, chụp 4 khung, gửi ảnh, lỗi mạng, khởi động lại, tắt module, rollback.
+5. Chỉ đánh dấu PASS sau khi trên thiết bị thật sử dụng được; nếu không có extension point, **không thể đạt mục tiêu native chỉ bằng Shadowrocket**.
+
+Không thay đổi các script hiện tại hoặc thêm hostname MITM rộng khi chưa có bằng chứng.
