@@ -1,0 +1,9 @@
+#!url=https://raw.githubusercontent.com/phamduykhanh31082006-star/shad/main/modules/Locket_Filter_Probe.sgmodule
+#!name=SKY Locket Filter Probe V1.0
+#!desc=READ ONLY: observe Locket API request category; does NOT enable Photobooth or captions.
+
+[Script]
+sky_locket_filter_probe = type=http-request, pattern=^https:\/\/api\.locketcamera\.com\/, script-path=https://raw.githubusercontent.com/phamduykhanh31082006-star/shad/main/js/Locket_Filter_Probe.js, requires-body=false, timeout=10
+
+[MITM]
+hostname = %APPEND% api.locketcamera.com
