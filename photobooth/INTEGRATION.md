@@ -6,6 +6,13 @@
 - `photobooth/preview.html`: môi trường kiểm thử Photobooth cục bộ.
 - `photobooth/test-captions.cjs`: kiểm thử mã chú thích.
 
+## Tích hợp bộ mã ảnh V1.1
+
+- `Photobooth.js` sử dụng `CaptionFilters.js` để vẽ nhãn lên ảnh tổng hợp.
+- `preview.html` có lựa chọn nhóm, mẫu nhãn và nội dung chữ.
+- `test-combined.cjs` xác minh trình dựng Canvas có vẽ nhãn được chọn.
+- Đây là tích hợp bộ mã xử lý ảnh, không phải tích hợp native vào Locket.
+
 ## Chưa có – không giả lập kết quả
 - Bộ xử lý ảnh hoặc tùy biến UI **bên trong Locket iOS gốc** thông qua Shadowrocket.
 - Nút Photobooth, Aa+ hoặc panel captions trong Locket native.

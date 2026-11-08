@@ -1,4 +1,4 @@
-# Photobooth Free V1.0
+# Photobooth Free V1.1
 
 Bộ mã xử lý ảnh Photobooth viết mới, miễn phí 100%, không quảng cáo, không tài khoản, không gửi ảnh lên máy chủ. Mã nguồn độc lập với Locket và `vuong2023/shad`.
 
@@ -33,6 +33,10 @@ python3 -m http.server 8000
 Sau đó truy cập `http://localhost:8000/photobooth/preview.html` bằng trình duyệt trên máy đang chạy server và nhấn **Xem ảnh minh họa**, hoặc bật camera nếu HTTPS/localhost được hỗ trợ.
 
 Có thể nhúng `js/Photobooth.js` vào một trang HTML hoặc ứng dụng có WebView do bạn sở hữu, rồi tạo `new PhotoboothFree.Photobooth({ target: '#app' })`.
+
+## Tích hợp nhãn miễn phí
+
+`preview.html` hiện sử dụng `CaptionFilters.js` để chọn 40 nhãn, chỉnh chữ và ghép nhãn trên ảnh/GIF/video qua bộ render chung. Phần này không tạo nút trong Locket gốc.
 
 ## Giới hạn phải biết
 

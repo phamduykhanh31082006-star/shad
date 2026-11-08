@@ -21,4 +21,6 @@ jobs:
           node --check js/CaptionFilters.js
           node --check js/Photobooth.js
       - name: Test free caption presets
-        run: node photobooth/test-captions.cjs
+        run: |
+          node photobooth/test-captions.cjs
+          node photobooth/test-combined.cjs

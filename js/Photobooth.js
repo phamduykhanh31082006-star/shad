@@ -1,5 +1,5 @@
 /*
- * Photobooth Free V1.0 — 100% original, no paywall, no tracking, no remote services.
+ * Photobooth Free V1.1 — 100% original, no paywall, no tracking, no remote services.
  * Works inside an HTML/JavaScript runtime with camera + Canvas APIs.
  * IMPORTANT: Shadowrocket HTTP scripts do NOT provide DOM, camera, or Canvas APIs.
  * This file cannot inject native buttons into Locket or any other iOS app via MITM.
@@ -153,6 +153,19 @@
       }
       ctx.fillText(message,width/2,base,maxW);
     }
+    if (config.captionId && config.captionId !== 'none' && global.CaptionFiltersFree) {
+      const badges = global.CaptionFiltersFree;
+      const item = config.captionId === 'user-custom'
+        ? badges.custom({ text: config.captionText || 'Tự phối', emoji: '✨' })
+        : badges.resolve(config.captionId, config.captionText ? {text:config.captionText} : {});
+      if (item) {
+        ctx.save();
+        const factor = width / 800;
+        ctx.scale(factor, factor);
+        badges.paint(ctx, item, 26, Math.round((height / factor) * .74), {fontSize:23, padding:13});
+        ctx.restore();
+      }
+    }
     return c;
   }
 
@@ -237,9 +250,9 @@
     constructor({target}={}){
       this.root=typeof target==='string'?document.querySelector(target):target;
       if(!this.root)throw new Error('Thiếu phần tử target.');
-      this.config={template:'grid',filter:'none',pattern:'none',color:'#ffffff',season:'none',textMode:'date',font:'modern',text:'',date:new Date(),overlay:null};
+      this.config={template:'grid',filter:'none',pattern:'none',color:'#ffffff',season:'none',textMode:'date',font:'modern',text:'',date:new Date(),overlay:null,captionId:'none',captionText:''};
       this.images=[null,null,null,null];this.stream=null;this.front=true;this.auto=true;this.delay=3;this.selected=0;this.busy=false;this.destroyed=false;this.started=false;
-      this.makeUI();this.renderControls();this.drawPreview();this.renderThumbs();
+      this.captionGroup='';this.makeUI();this.renderControls();this.renderCaptionChoices();this.drawPreview();this.renderThumbs();
     }
     makeUI(){
       const style=document.createElement('style');style.textContent=CSS;this.root.appendChild(style);
@@ -252,6 +265,11 @@
         <div class="pf-panel"><h3>Cách chụp</h3><div class="pf-row pf-auto"></div><div class="pf-section">Hẹn giờ ảnh đầu</div><div class="pf-row pf-delay"></div><div class="pf-section">Kiểu</div><div class="pf-row pf-template"></div><div class="pf-section">Phong cách</div><div class="pf-row pf-filter"></div></div>
         <div class="pf-panel"><h3>Khung và trang trí</h3><div class="pf-label">Màu trơn</div><div class="pf-row pf-colors"></div><div class="pf-label">Họa tiết</div><div class="pf-row pf-pattern"></div><div class="pf-label">Theo mùa</div><div class="pf-row pf-season"></div><div class="pf-label">Khung ảnh tự thiết kế</div><div class="pf-inline"><button class="pf-btn pf-overlay-upload">Tải PNG trong suốt</button><button class="pf-btn pf-overlay-reset">Bỏ khung</button><input class="pf-file pf-overlay-pick" type="file" accept="image/png,image/webp"></div></div>
         <div class="pf-panel"><h3>Chữ</h3><div class="pf-row pf-textmode"></div><div class="pf-label">Phông chữ</div><div class="pf-row pf-font"></div><div class="pf-label">Nội dung chữ riêng</div><input class="pf-textinput pf-text-value" maxlength="80" placeholder="Nhập dòng chữ của bạn"><p class="pf-hint">Các hiệu ứng, khung, ngày chụp và xuất file đều miễn phí. Không có tài khoản, quảng cáo hay gói trả phí.</p></div>
+        <div class="pf-panel"><h3>Chú thích · 40 mẫu miễn phí</h3>
+        <div class="pf-label">Nhóm</div><select class="pf-textinput pf-caption-group" aria-label="Nhóm chú thích"></select>
+        <div class="pf-label">Mẫu chú thích</div><select class="pf-textinput pf-caption-preset" aria-label="Mẫu chú thích"></select>
+        <div class="pf-label">Chữ tùy chỉnh</div><input class="pf-textinput pf-caption-text" maxlength="120" placeholder="Để trống dùng mẫu">
+        <p class="pf-hint">Chú thích ghép lên ảnh trước khi xuất. Không kết nối API Locket.</p></div>
         <div class="pf-panel"><h3>Xem trước thành phẩm</h3><canvas class="pf-preview"></canvas><div class="pf-bottom"><button class="pf-primary pf-save">Lưu ảnh PNG</button><button class="pf-primary pf-share">Chia sẻ ảnh</button><button class="pf-btn pf-gif">Xuất GIF</button><button class="pf-btn pf-video-export">Xuất video</button></div><div class="pf-info">Video dùng định dạng được trình duyệt hỗ trợ (MP4/WebM). Tính năng này không thêm nút vào ứng dụng iOS gốc qua Shadowrocket.</div></div>`;
       this.root.appendChild(wrap);this.el=wrap;
       this.video=wrap.querySelector('.pf-video');this.count=wrap.querySelector('.pf-count');this.placeholder=wrap.querySelector('.pf-placeholder');this.live=wrap.querySelector('.pf-status');
@@ -265,9 +283,34 @@
       Q('.pf-overlay-pick').onchange=async e=>{try{this.config.overlay=await decodeImage(e.target.files[0]);this.refresh();}catch(err){this.setStatus(err.message);}};
       Q('.pf-overlay-reset').onclick=()=>{this.config.overlay=null;this.refresh();};
       Q('.pf-text-value').oninput=e=>{this.config.text=e.target.value;this.refresh();};
+      Q('.pf-caption-group').onchange=e=>{this.captionGroup=e.target.value;this.renderCaptionChoices();this.drawPreview();};
+      Q('.pf-caption-preset').onchange=e=>{this.config.captionId=e.target.value;this.drawPreview();};
+      Q('.pf-caption-text').oninput=e=>{this.config.captionText=e.target.value;this.drawPreview();};
       Q('.pf-save').onclick=()=>this.savePNG();Q('.pf-share').onclick=()=>this.share();Q('.pf-gif').onclick=()=>this.saveGIF();Q('.pf-video-export').onclick=()=>this.saveVideo();
     }
     setStatus(s){this.live.textContent=s;}
+    renderCaptionChoices(){
+      const groups=this.el.querySelector('.pf-caption-group');
+      const presets=this.el.querySelector('.pf-caption-preset');
+      const captions=global.CaptionFiltersFree;
+      if(!captions) {
+        const opt=document.createElement('option');opt.value='none';opt.textContent='Chưa nạp CaptionFilters.js';
+        presets.replaceChildren(opt);presets.disabled=true;groups.replaceChildren();groups.disabled=true;return;
+      }
+      groups.replaceChildren();
+      const all=document.createElement('option');all.value='';all.textContent='Tất cả';groups.appendChild(all);
+      captions.groups.forEach(group=>{const opt=document.createElement('option');opt.value=group.id;opt.textContent=group.label;groups.appendChild(opt);});
+      groups.value=this.captionGroup;
+      const choices=captions.list({group:this.captionGroup});
+      if(this.config.captionId!=='none' && this.config.captionId!=='user-custom' &&
+        !choices.some(item=>item.id===this.config.captionId))this.config.captionId='none';
+      presets.replaceChildren();
+      [{id:'none',name:'Không thêm nhãn'},...choices,{id:'user-custom',name:'Tự phối'}].forEach(item=>{
+        const opt=document.createElement('option');opt.value=item.id;
+        opt.textContent=item.emoji?item.emoji+' '+item.name:item.name;presets.appendChild(opt);
+      });
+      presets.value=this.config.captionId;
+    }
     renderButtons(selector,items,value,click){
       const root=this.el.querySelector(selector);root.replaceChildren();
       items.forEach(item=>{const b=document.createElement('button');b.className='pf-option';b.textContent=item.label;b.setAttribute('aria-pressed',String(value===item.id));b.onclick=()=>click(item.id);root.appendChild(b);});
@@ -386,5 +429,5 @@
     addDemoPhotos(){this.images=[0,1,2,3].map(makeDemoImage);this.selected=0;this.refresh();this.setStatus('Đang xem 4 ảnh minh họa để kiểm thử.');}
     destroy(){this.destroyed=true;if(this.stream)this.stream.getTracks().forEach(t=>t.stop());this.root.replaceChildren();}
   }
-  global.PhotoboothFree={Photobooth,renderComposition,gifEncode,version:'1.0.0'};
+  global.PhotoboothFree={Photobooth,renderComposition,gifEncode,version:'1.1.0'};
 })(typeof window !== 'undefined' ? window : globalThis);
