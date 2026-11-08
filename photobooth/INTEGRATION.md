@@ -32,3 +32,9 @@ Mã `Photobooth.js` và `CaptionFilters.js` là **image filters and data**, khô
 5. Chỉ đánh dấu PASS sau khi trên thiết bị thật sử dụng được; nếu không có extension point, **không thể đạt mục tiêu native chỉ bằng Shadowrocket**.
 
 Không thay đổi các script hiện tại hoặc thêm hostname MITM rộng khi chưa có bằng chứng.
+
+## Multi-shot filter V1.2
+
+- Added `js/PhotoboothFilter.js` to collect four frames through an explicitly supplied camera callback, support retaking an individual frame, and pass four frames to a compositor.
+- Added `photobooth/test-multishot.cjs` and updated GitHub Actions.
+- This **does not** provide access to the shutter or camera frames of the native Locket app through Shadowrocket; that dependency remains unimplemented and cannot be inferred from the repo.
