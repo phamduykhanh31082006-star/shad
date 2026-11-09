@@ -1,8 +1,10 @@
-// Shadowrocket JS - Xử lý Network API (Premium & Metadata)
-const url = $request.url;
-const method = $request.method;
+// Locket_Ohoang7_Zidwi.js
+// Kết hợp: Mở khóa gốc (Giữ Video, Premium) + Inject Metadata Photobooth
 
-if (url.indexOf("api.revenuecat.com") != -1) {
+const url = $request.url;
+
+if (url.includes("api.revenuecat.com")) {
+    // [Kế thừa nguyên bản gốc] Xử lý mở khóa Gold
     let body = JSON.parse($response.body);
     body.subscriber.entitlements = {
         "Gold": {
@@ -24,14 +26,15 @@ if (url.indexOf("api.revenuecat.com") != -1) {
         }
     };
     $done({body: JSON.stringify(body)});
-} else if (url.indexOf("api.locketcamera.com/v1/posts") != -1) {
-    // Inject custom metadata cho các bài post dạng Photobooth
-    let reqBody = $request.body;
+} 
+else if (url.includes("api.locketcamera.com/v1/posts")) {
+    // [Cập nhật mới] Tiêm Metadata Photobooth
     try {
-        let parsed = JSON.parse(reqBody);
-        parsed.is_photobooth = true;
-        parsed.frame_count = 4; // Cấu hình mặc định 4 frames
-        $done({body: JSON.stringify(parsed)});
+        let body = JSON.parse($request.body);
+        // Server Locket cần flags này để hiện UI khung ảnh ở máy người nhận
+        body.is_photobooth = true;
+        body.frame_count = 4;
+        $done({body: JSON.stringify(body)});
     } catch(e) {
         $done({});
     }
