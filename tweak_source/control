@@ -1,0 +1,9 @@
+Package: com.zidwi.locket
+Name: Locket Photobooth Pro (Zidwi)
+Depends: mobilesubstrate
+Version: 1.0.0
+Architecture: iphoneos-arm
+Description: Nâng cấp Locket - Chụp liên tiếp, ghép ảnh Photobooth và Bypass Premium.
+Maintainer: ZIDWIGAMING
+Author: ZIDWIGAMING
+Section: Tweaks
