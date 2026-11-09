@@ -1,16 +1,14 @@
 'use strict';
-const assert=require('node:assert/strict');
-const fs=require('node:fs');
-const path=require('node:path');
-const root=path.join(__dirname,'..');
-const html=fs.readFileSync(path.join(root,'index.html'),'utf8');
-assert.match(html,/script src="\.\/js\/CaptionFilters\.js"/);
-assert.match(html,/script src="\.\/js\/Photobooth\.js"/);
-assert.match(html,/new PhotoboothFree\.Photobooth/);
-assert.match(html,/id="sample"/);
-assert.match(html,/id="app"/);
-assert.match(html,/không tự gửi vào Locket/);
-for(const f of ['js/CaptionFilters.js','js/Photobooth.js']){
-  assert.ok(fs.existsSync(path.join(root,f)));
+const assert = require('node:assert/strict');
+const fs = require('node:fs');
+const p = require('node:path');
+const root = p.join(__dirname,'..');
+const html = fs.readFileSync(p.join(root,'index.html'),'utf8');
+for(const id of ['view-camera','view-history','view-chats','view-friends','view-profile','view-photobooth','photobooth-host','caption-select','shutter','camera-start','save-photo']){
+ assert.match(html,new RegExp('id="'+id+'"'),'Missing UI '+id);
 }
-console.log('PASS: mobile web entrypoint / local assets / clear Locket limitations');
+for(const src of ['./js/CaptionFilters.js','./js/Photobooth.js','./js/sky-locket-ui.js'])assert.ok(html.includes('src="'+src+'"'),'Missing script '+src);
+assert.match(html,/chưa kết nối tài khoản Locket/i);
+assert.doesNotMatch(html,/<input[^>]*type="password"/i);
+for(const filename of ['js/CaptionFilters.js','js/Photobooth.js','js/sky-locket-ui.js'])assert.ok(fs.existsSync(p.join(root,filename)));
+console.log('PASS: SKY Locket Web navigation, camera, editor and clear auth boundary');

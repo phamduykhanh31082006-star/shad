@@ -6,6 +6,7 @@ on:
       - "js/PhotoboothFilter.js"
       - "js/Locket_Filter_Probe.js"
       - "index.html"
+      - "js/sky-locket-ui.js"
       - "modules/Locket_Filter_Probe.sgmodule"
       - "photobooth/**"
       - ".github/workflows/photobooth-check.yml"
@@ -32,4 +33,5 @@ jobs:
           node photobooth/test-combined.cjs
           node photobooth/test-multishot.cjs
           node photobooth/test-shadowrocket-probe.cjs
+          node --check js/sky-locket-ui.js
           node photobooth/test-web-entry.cjs
