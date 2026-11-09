@@ -46,7 +46,7 @@ function sourceToCanvas(source,w,h){
   const can=document.createElement('canvas');can.width=1024;can.height=1024;const ctx=can.getContext('2d');
   const sw=source.videoWidth||source.naturalWidth,sh=source.videoHeight||source.naturalHeight;
   const scale=Math.max(1024/sw,1024/sh);const dw=sw*scale,dh=sh*scale;
-  ctx.save();ctx.filter=filters[filter];
+  ctx.save();ctx.filter='none';
   if(source===video&&front){ctx.translate(1024,0);ctx.scale(-1,1);}
   ctx.drawImage(source,(1024-dw)/2,(1024-dh)/2,dw,dh);ctx.restore();return can;
 }
