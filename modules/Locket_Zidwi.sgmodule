@@ -1,0 +1,14 @@
+#!name=Locket Photobooth Pro (Zidwi)
+#!desc=Nâng cấp Locket: Mở khóa Premium (Gold) và chuẩn bị API data để kích hoạt Photobooth Filter (2/3/4 ảnh).
+#!author=ZIDWIGAMING
+#!category=Zidwi
+
+[MITM]
+hostname = %APPEND% api.revenuecat.com, api.locketcamera.com, firestore.googleapis.com
+
+[Script]
+# Mở khóa RevenueCat Premium (Locket Gold)
+Locket_Premium = type=http-response,pattern=^https:\/\/api\.revenuecat\.com\/v1\/(receipts|subscribers\/.*),requires-body=1,max-size=0,script-path=Locket_API_Zidwi.js
+
+# Intercept Locket Post API để chèn metadata Photobooth nếu cần xử lý server-side
+Locket_Post_Meta = type=http-request,pattern=^https:\/\/api\.locketcamera\.com\/v1\/posts,requires-body=1,max-size=0,script-path=Locket_API_Zidwi.js
